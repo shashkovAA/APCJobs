@@ -6,13 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -69,8 +68,6 @@ public class Exel
 			rowNew.createCell(cellIndex).setCellValue("qwerty" + cellValue);
 			
 		}
-		//  row.createCell(0).setCellValue("qwerty1");
-		//  row.createCell(1).setCellValue("qwerty2");
 		  
 		  ExcelFile.close();
 		  
@@ -106,6 +103,32 @@ public class Exel
 		}
 		
 		pkg.close();
+	
+	}
+	
+	public ArrayList<String> readJobsHeadersFromFileToList(String exelFile) throws IOException, InvalidFormatException
+	{
+		ArrayList<String> headerList = new ArrayList<String>();
+		OPCPackage pkg = OPCPackage.open(new File(exelFile));
+		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		Sheet sheet = wb.getSheetAt(0);
+		XSSFRow row; 
+
+		Iterator<Row> rows = sheet.rowIterator();
+
+		while (rows.hasNext()) {
+			row=(XSSFRow) rows.next();
+			headerList.add(row.getCell(0).getStringCellValue());
+			
+		}
+		pkg.close();
+		
+		Debug.log.info("---===  Headers getted from file Job_Templates:   ===---");
+		for (int i=0;i<headerList.size();i++)
+			Debug.log.debug(headerList.get(i));
+		
+		return headerList;
+		
 	
 	}
 

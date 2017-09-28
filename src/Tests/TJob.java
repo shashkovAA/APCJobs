@@ -31,14 +31,21 @@ public class TJob
 	@Test
 	public void test1()
 	{
-		String line = "CONTROL:YES:";
+		
 		assertEquals(job.getJobSettingsField("CONTROL:YES:").getName(), "CONTROL");	
 	}
 	@Test
 	public void test2()
 	{
-		String line = "CONTROL:YES:";
+		
 		assertEquals(job.getJobSettingsField("CONTROL:YES:").getValue(), "YES");	
+	}
+	
+	@Test
+	public void test3()
+	{
+	
+		assertEquals(job.getJobSettingsField("CONTROL::").getValue(), "");	
 	}
 
 

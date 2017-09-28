@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -15,14 +16,7 @@ public class Job
 		JobMap = new HashMap<String,String>();
 	}
 	
-	/*public void getJobMapFromFile() {
-		JobMap.put("value1", "test");
-		JobMap.put("value2", "test2");
-		JobMap.put("value3", "test3");
-			
-	}*/
-	
-	
+		
 	public void printJobMap() {
 		
 		for (HashMap.Entry<String, String> it : JobMap.entrySet()) 
@@ -49,13 +43,24 @@ public class Job
 	}
 	
 	public JobSettingsField getJobSettingsField(String line) {
-		int semicolonIndex = line.indexOf(':');
+		int semicolonFirstIndex = line.indexOf(':');
+		int semicolonLastIndex = line.lastIndexOf(':');
 		
 		JobSettingsField josefi = new JobSettingsField();
-		josefi.setName(line.substring(0, semicolonIndex));
-		josefi.setValue(line.substring(semicolonIndex + 1, line.length()-1));
+		josefi.setName(line.substring(0, semicolonFirstIndex));
+		if (semicolonLastIndex - semicolonFirstIndex > 1  )
+			josefi.setValue(line.substring(semicolonFirstIndex + 1, semicolonLastIndex));
+		else josefi.setValue("");
 		
 		return josefi;
+	}
+	
+	
+	
+	public ArrayList<String> getListHeaders(String exelFile) {
+		
+		
+		return new ArrayList<String>();
 	}
 	
 

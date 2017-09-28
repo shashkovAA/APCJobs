@@ -5,7 +5,8 @@ public class JobSettingsField
 	private String name;
 	private String value;
 	
-	public JobSettingsField(){}
+	public JobSettingsField(){
+	}
 	
 	public JobSettingsField(String name, String value)
 	{
