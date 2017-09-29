@@ -1,0 +1,46 @@
+package Objects;
+
+public class ConvertNames
+{
+			
+		
+	public static String convertFilePathFromWinToUnix(String path) {
+		return path.replace('\\', '/');
+	}
+	
+	public static String getFileNameWithExt(String fileNameWithPath) {
+		
+		int indexEndFilePath = Math.max(fileNameWithPath.lastIndexOf('\\'), fileNameWithPath.lastIndexOf('/'));
+		return fileNameWithPath.substring(indexEndFilePath + 1);
+	}
+	
+	
+	public static String getDirectoryPathStringWinFormat(String fileNameWithPath) {
+		return fileNameWithPath.substring(0, fileNameWithPath.lastIndexOf('\\') + 1);
+	}
+	
+	public static String getDirectoryPathStringUnixFormat(String fileNameWithPath) {
+		return fileNameWithPath.substring(0, fileNameWithPath.lastIndexOf('/') + 1);
+	}
+	
+	public static String getFileName(String fileNameWithPath) {
+		String fileNameFull = getFileNameWithExt(fileNameWithPath);
+		return fileNameFull.substring(0,fileNameFull.indexOf('.'));
+	}
+	
+	public static String getFileExension(String fileNameWithPath) {
+		String fileNameFull = getFileNameWithExt(fileNameWithPath);
+		return fileNameFull.substring(fileNameFull.indexOf('.'));
+	}
+	
+	public static String getDriveLetterFromFullFileName(String fileNameWithPath) {
+		
+		String DriveLetter = fileNameWithPath.substring(0, 1);
+		if (DriveLetter.matches("[a-z]|[A-Z]"))
+			return DriveLetter.toLowerCase() + ":";
+		else return "";
+		
+	}
+	
+	
+}

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -15,7 +14,6 @@ public class Job
 	public Job(){
 		JobMap = new HashMap<String,String>();
 	}
-	
 		
 	public void printJobMap() {
 		
@@ -23,23 +21,34 @@ public class Job
 			Debug.log.debug(it.getKey() + " " + it.getValue());	   	
 	}
 	
-	public void getJobMapFromFile(String fileName) {
-		String readline;
+	public HashMap<String,String> getJobMap(String jobFile) {
 		
-		try (BufferedReader buffer = new BufferedReader(new FileReader(fileName));) {
-		    while ((readline = buffer.readLine()) != null) {
-		    	Debug.log.info(readline);
+		if (getJobMapFromFile(jobFile))
+				return JobMap;
+		else return new HashMap<String,String>();
+	}	
+	
+	public boolean getJobMapFromFile(String fullFileName) {
+		String readline;
+		JobMap.put("NAME", ConvertNames.getFileName(fullFileName));
+		
+		try (BufferedReader buffer = new BufferedReader(new FileReader(fullFileName));) {
+			Debug.log.debug("---=== Reading rows from Job_Template file ===---");
+			while ((readline = buffer.readLine()) != null) {
+		    	Debug.log.debug(readline);
 		    	JobMap.put(getJobSettingsField(readline).getName(), getJobSettingsField(readline).getValue());
 		    	Debug.log.debug("[name] = " + getJobSettingsField(readline).getName());
 		    	Debug.log.debug("[value] = " + getJobSettingsField(readline).getValue());
 		    }
 		} catch (FileNotFoundException e) {
 		    Debug.log.error(e.getMessage());
+		    return false;
 		    
 		} catch (IOException e) {
 		    Debug.log.error(e.getMessage());
-		    
+		    return false;
 		}
+		return true;
 	}
 	
 	public JobSettingsField getJobSettingsField(String line) {
@@ -53,18 +62,5 @@ public class Job
 		else josefi.setValue("");
 		
 		return josefi;
-	}
-	
-	
-	
-	public ArrayList<String> getListHeaders(String exelFile) {
-		
-		
-		return new ArrayList<String>();
-	}
-	
-
-	
-	
-	
+	}	
 }

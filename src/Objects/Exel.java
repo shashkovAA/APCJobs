@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -50,9 +51,9 @@ public class Exel
 		 
 	}
 	
-	public void addDataToExel() throws InvalidFormatException, IOException {
-		// XSSFWorkbook, File
-		InputStream ExcelFile = new FileInputStream("workbook.xlsx");
+	public void addDataToExel(String outFile) throws InvalidFormatException, IOException {
+
+		InputStream ExcelFile = new FileInputStream(outFile);
 		XSSFWorkbook  wb = new XSSFWorkbook(ExcelFile);
 		XSSFRow rowHeader = wb.getSheetAt(0).getRow(0);
 		XSSFRow rowNew = wb.getSheetAt(0).createRow(1);
@@ -71,7 +72,7 @@ public class Exel
 		  
 		  ExcelFile.close();
 		  
-		  FileOutputStream fileOut = new FileOutputStream("workbook.xlsx");
+		  FileOutputStream fileOut = new FileOutputStream(outFile);
 		    wb.write(fileOut);
 		    fileOut.flush();
 		    fileOut.close();
@@ -123,13 +124,65 @@ public class Exel
 		}
 		pkg.close();
 		
-		Debug.log.info("---===  Headers getted from file Job_Templates:   ===---");
+		Debug.log.debug("---===  Headers getted from file Job_Templates:   ===---");
 		for (int i=0;i<headerList.size();i++)
 			Debug.log.debug(headerList.get(i));
 		
-		return headerList;
-		
+		return headerList;	
+	}
 	
+	public void addHeadersDataToExel(ArrayList<String> headerList, String outXLSXFile) throws InvalidFormatException, IOException {
+
+		deleteOUTFileIfExist(outXLSXFile);
+
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("new sheet");
+		Row rowHeader = sheet.createRow((short)0);
+
+		for (int i = 0; i < headerList.size(); i++) {
+			rowHeader.createCell(i).setCellValue(headerList.get(i));
+		}
+			  
+		  FileOutputStream fileOut = new FileOutputStream(outXLSXFile);
+		    workbook.write(fileOut);
+		    workbook.close();
+		    fileOut.flush();
+		    fileOut.close();
+	}
+
+	public void deleteOUTFileIfExist(String outXLSXFile) {
+		File prevXLSXFile = new File(outXLSXFile);
+		if (prevXLSXFile.exists())
+			prevXLSXFile.delete();
+	}
+
+	public void addJobDataToExel(HashMap<String,String> jobMap, String outFile) throws InvalidFormatException, IOException {
+		
+		
+		InputStream inExcelFile = new FileInputStream(outFile);
+		XSSFWorkbook  workbook = new XSSFWorkbook(inExcelFile);	
+		XSSFRow rowHeader = workbook.getSheetAt(0).getRow(0);
+		XSSFRow rowJob = workbook.getSheetAt(0).createRow(1);
+		XSSFCell cell;	
+		Iterator<Cell> cells = rowHeader.cellIterator();
+		String cellValue = "";
+		int cellIndex = 0;
+		
+		Debug.log.debug("---=== Inserted values to cells from JobMap  ===---");
+		while (cells.hasNext()) {
+			cell=(XSSFCell) cells.next();
+			cellValue = cell.getStringCellValue();
+			cellIndex = cell.getColumnIndex();	
+			rowJob.createCell(cellIndex).setCellValue(jobMap.get(cellValue));
+			Debug.log.debug("[cellvalue" + cellIndex + "] for " + cellValue + " = " + jobMap.get(cellValue));
+		}
+		inExcelFile.close();
+		  
+		FileOutputStream fileOut = new FileOutputStream(outFile);	
+		workbook.write(fileOut);
+		workbook.close();
+		fileOut.flush();
+		fileOut.close();	   
 	}
 
 }
