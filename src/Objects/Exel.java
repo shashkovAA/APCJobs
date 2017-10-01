@@ -22,7 +22,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Exel
 {
-	
+	private String templateHeadersFile;
+	private String outJobsFile;
+	private ArrayList<String> headerList = new ArrayList<String>();
 	
 	public void createWorkBook() {
 		 Workbook workbook = new XSSFWorkbook();
@@ -107,10 +109,36 @@ public class Exel
 	
 	}
 	
-	public ArrayList<String> readJobsHeadersFromFileToList(String exelFile) throws IOException, InvalidFormatException
+	public void setTemplateHeadersFile(String templateHeadersFile) {
+		this.templateHeadersFile = templateHeadersFile;	
+	}
+	public void setOutJobsExelFile(String outJobsFile) {
+		this.outJobsFile = outJobsFile;	
+	}
+	
+	public void addHeadersDataToExelNoExceptHandl() throws InvalidFormatException, IOException {
+
+		deleteOUTFileIfExist(outJobsFile);
+		readJobsHeadersFromFileToList();
+
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("new sheet");
+		Row rowHeader = sheet.createRow((short)0);
+
+		for (int i = 0; i < headerList.size(); i++) {
+			rowHeader.createCell(i).setCellValue(headerList.get(i));
+		}
+			  
+		  FileOutputStream fileOut = new FileOutputStream(outJobsFile);
+		    workbook.write(fileOut);
+		    workbook.close();
+		    fileOut.flush();
+		    fileOut.close();
+	}
+	
+	public void readJobsHeadersFromFileToListNoExceptHandl() throws InvalidFormatException, IOException 
 	{
-		ArrayList<String> headerList = new ArrayList<String>();
-		OPCPackage pkg = OPCPackage.open(new File(exelFile));
+		OPCPackage pkg = OPCPackage.open(new File(templateHeadersFile));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		Sheet sheet = wb.getSheetAt(0);
 		XSSFRow row; 
@@ -122,33 +150,15 @@ public class Exel
 			headerList.add(row.getCell(0).getStringCellValue());
 			
 		}
+		//wb.close();
 		pkg.close();
 		
 		Debug.log.debug("---===  Headers getted from file Job_Templates:   ===---");
 		for (int i=0;i<headerList.size();i++)
-			Debug.log.debug(headerList.get(i));
-		
-		return headerList;	
+			Debug.log.debug(headerList.get(i));	
 	}
 	
-	public void addHeadersDataToExel(ArrayList<String> headerList, String outXLSXFile) throws InvalidFormatException, IOException {
-
-		deleteOUTFileIfExist(outXLSXFile);
-
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("new sheet");
-		Row rowHeader = sheet.createRow((short)0);
-
-		for (int i = 0; i < headerList.size(); i++) {
-			rowHeader.createCell(i).setCellValue(headerList.get(i));
-		}
-			  
-		  FileOutputStream fileOut = new FileOutputStream(outXLSXFile);
-		    workbook.write(fileOut);
-		    workbook.close();
-		    fileOut.flush();
-		    fileOut.close();
-	}
+	
 
 	public void deleteOUTFileIfExist(String outXLSXFile) {
 		File prevXLSXFile = new File(outXLSXFile);
@@ -156,33 +166,67 @@ public class Exel
 			prevXLSXFile.delete();
 	}
 
-	public void addJobDataToExel(HashMap<String,String> jobMap, String outFile) throws InvalidFormatException, IOException {
-		
-		
-		InputStream inExcelFile = new FileInputStream(outFile);
+	public void addJobDataToExelNoExceptHandl(HashMap<String,String> jobMap) throws InvalidFormatException, IOException {
+			
+		InputStream inExcelFile = new FileInputStream(outJobsFile);
 		XSSFWorkbook  workbook = new XSSFWorkbook(inExcelFile);	
 		XSSFRow rowHeader = workbook.getSheetAt(0).getRow(0);
-		XSSFRow rowJob = workbook.getSheetAt(0).createRow(1);
+		int lastRowIndex = workbook.getSheetAt(0).getLastRowNum();
+		XSSFRow rowJob = workbook.getSheetAt(0).createRow(lastRowIndex + 1);
 		XSSFCell cell;	
 		Iterator<Cell> cells = rowHeader.cellIterator();
 		String cellValue = "";
 		int cellIndex = 0;
 		
-		Debug.log.debug("---=== Inserted values to cells from JobMap  ===---");
+		Debug.log.debug("---=== Inserted values to ExelFile from JobMap  ===---");
 		while (cells.hasNext()) {
 			cell=(XSSFCell) cells.next();
 			cellValue = cell.getStringCellValue();
 			cellIndex = cell.getColumnIndex();	
 			rowJob.createCell(cellIndex).setCellValue(jobMap.get(cellValue));
-			Debug.log.debug("[cellvalue" + cellIndex + "] for " + cellValue + " = " + jobMap.get(cellValue));
+			Debug.log.debug("[cell"+ cellIndex +"value] for " + cellValue + " = " + jobMap.get(cellValue));
 		}
 		inExcelFile.close();
 		  
-		FileOutputStream fileOut = new FileOutputStream(outFile);	
+		FileOutputStream fileOut = new FileOutputStream(outJobsFile);	
 		workbook.write(fileOut);
 		workbook.close();
 		fileOut.flush();
 		fileOut.close();	   
 	}
+	
+	public void readJobsHeadersFromFileToList() {
+		
+		try {
+			readJobsHeadersFromFileToListNoExceptHandl();
+		} catch (InvalidFormatException except) {
+			Debug.log.error(except.getMessage());
+		} catch (IOException except) {
+			Debug.log.error(except.getMessage());
+		}	
+	}
+	public void addHeadersDataToExelFile() {
+		
+		try {
+			addHeadersDataToExelNoExceptHandl();
+		} catch (InvalidFormatException except) {
+			Debug.log.error(except.getMessage());
+		} catch (IOException except) {
+			Debug.log.error(except.getMessage());
+		}	
+	}
+	public void addJobDataToExel(HashMap<String,String> jobMap) {
+		
+		try {
+			addJobDataToExelNoExceptHandl(jobMap);
+		} catch (InvalidFormatException except) {
+			Debug.log.error(except.getMessage());
+		} catch (IOException except) {
+			Debug.log.error(except.getMessage());
+		}	
+	}
+	
+	
+	
 
 }

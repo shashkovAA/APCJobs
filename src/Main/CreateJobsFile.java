@@ -1,15 +1,11 @@
 package Main;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import Objects.*;
 
-import Objects.Debug;
-import Objects.Exel;
-import Objects.Job;
 
 public class CreateJobsFile
 {
@@ -22,28 +18,25 @@ public class CreateJobsFile
 		Debug.initDebugLog(logSettingsFileName);
 		Debug.log.info("Programm is started.");
 		
-		
-		String jobFileName = currentPath + "\\jobs\\learningJob.job";
-		Job job = new Job();
-		HashMap<String, String> jobMap = job.getJobMap(jobFileName);
-		//job.printJobMap();
-		
+		String jobFileName; 
+
 		Exel exel = new Exel();
-		ArrayList<String> headerList = new ArrayList<String>();
+		exel.setTemplateHeadersFile("Job_template.xlsx");
+		exel.setOutJobsExelFile("out.xlsx");
+		exel.addHeadersDataToExelFile();
 		
-		try
-		{
-			headerList = exel.readJobsHeadersFromFileToList("Job_template.xlsx");
-			exel.addHeadersDataToExel(headerList, "out.xlsx");
-			exel.addJobDataToExel(jobMap,"out.xlsx");
-			
-		} catch (InvalidFormatException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
+		JobFilesList  list = new JobFilesList("jobs\\", ".job");
+		ArrayList<String> jobFilesList = new ArrayList<String>();
+		jobFilesList = list.get();
+		
+		for (int i=0; i<jobFilesList.size(); i++) {
+			jobFileName = currentPath + "\\jobs\\" + jobFilesList.get(i);
+			Job job = new Job();
+			HashMap<String, String> jobMap = job.getJobMap(jobFileName);		
+			exel.addJobDataToExel(jobMap);
 		}
+		
+		
 	}
 
 }

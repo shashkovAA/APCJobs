@@ -33,7 +33,7 @@ public class Job
 		JobMap.put("NAME", ConvertNames.getFileName(fullFileName));
 		
 		try (BufferedReader buffer = new BufferedReader(new FileReader(fullFileName));) {
-			Debug.log.debug("---=== Reading rows from Job_Template file ===---");
+			Debug.log.debug("---=== Reading rows from "+ ConvertNames.getFileNameWithExt(fullFileName) +" file ===---");
 			while ((readline = buffer.readLine()) != null) {
 		    	Debug.log.debug(readline);
 		    	JobMap.put(getJobSettingsField(readline).getName(), getJobSettingsField(readline).getValue());

@@ -13,7 +13,6 @@ import Objects.Exel;
 
 public class TExel
 {
-	private ArrayList<String> headerList = new ArrayList<String>();
 	@Test
 	public void test()
 	{
@@ -21,22 +20,11 @@ public class TExel
 		Debug.initDebugLog(logSettingsFileName);
 		
 		Exel exel = new Exel();
-		//exel.createWorkBook();
-		try
-		{
-			//exel.addDataToExel();
-			//exel.readXLSFile();
-			headerList = exel.readJobsHeadersFromFileToList("Job_template.xlsx");
-			exel.addHeadersDataToExel(headerList, "out.xlsx");
-			
-			
-		} catch (InvalidFormatException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		
+			exel.setTemplateHeadersFile("Job_template.xlsx");
+			exel.setOutJobsExelFile("testout.xlsx");
+			exel.addHeadersDataToExelFile();
+		
 		assertEquals(true, true);
 	}
 
