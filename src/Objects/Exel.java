@@ -15,24 +15,32 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Exel
 {
 	private String templateHeadersFile;
 	private String outJobsFile;
-	private ArrayList<String> headerList = new ArrayList<String>();
+	private ArrayList<JobSettingsHeader> headerList = new ArrayList<JobSettingsHeader>();
 	
 	public void createWorkBook() {
-		 Workbook workbook = new XSSFWorkbook();
-		 Sheet sheet = workbook.createSheet("new sheet");
-		 Row row = sheet.createRow((short)0);
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("new sheet");
+		sheet.setDefaultColumnWidth(15);
+		XSSFRow row = sheet.createRow((short)0);
 		    // Create a cell and put a value in it.
-		    Cell cell = row.createCell(0);
-		    cell.setCellValue("1p9");
+		XSSFCell cell = row.createCell(0);
+		XSSFCellStyle style = workbook.createCellStyle(); //Create new style
+        style.setWrapText(true); //Set wordwrap
+        cell.setCellStyle(style);
+		cell.setCellValue("The confirmation message that the system plays to the called party after the called party opts out to DNC.");
 		    row.createCell(1).setCellValue("2t8");
 		    System.out.println(row.getLastCellNum());
 		    
@@ -121,12 +129,31 @@ public class Exel
 		deleteOUTFileIfExist(outJobsFile);
 		readJobsHeadersFromFileToList();
 
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("new sheet");
-		Row rowHeader = sheet.createRow((short)0);
-
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("new sheet");
+		sheet.setDefaultColumnWidth(15);
+		
+		XSSFFont headerFont= workbook.createFont();
+        headerFont.setBold(true);
+		
+		XSSFCellStyle styleHeaderOverview = workbook.createCellStyle(); //Create new style
+		styleHeaderOverview.setWrapText(true); //Set wordwrap
+		styleHeaderOverview.setVerticalAlignment(VerticalAlignment.CENTER);
+		
+		XSSFCellStyle styleHeaderTag = workbook.createCellStyle(); //Create new style
+		styleHeaderTag.setFont(headerFont);
+		       
+        
+        XSSFRow rowHeaderOvetview = sheet.createRow((short)0);
+		XSSFRow rowHeaderTag = sheet.createRow((short)1);
 		for (int i = 0; i < headerList.size(); i++) {
-			rowHeader.createCell(i).setCellValue(headerList.get(i));
+			XSSFCell headerOverviewCell = rowHeaderOvetview.createCell(i);
+			headerOverviewCell.setCellStyle(styleHeaderOverview);
+			headerOverviewCell.setCellValue(headerList.get(i).getOverview());
+			
+			XSSFCell headerTagCell =rowHeaderTag.createCell(i);
+			headerTagCell.setCellStyle(styleHeaderTag);
+			headerTagCell.setCellValue(headerList.get(i).getTag());
 		}
 			  
 		  FileOutputStream fileOut = new FileOutputStream(outJobsFile);
@@ -147,7 +174,8 @@ public class Exel
 
 		while (rows.hasNext()) {
 			row=(XSSFRow) rows.next();
-			headerList.add(row.getCell(0).getStringCellValue());
+			
+			headerList.add(new JobSettingsHeader(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue()));
 			
 		}
 		//wb.close();
@@ -170,7 +198,7 @@ public class Exel
 			
 		InputStream inExcelFile = new FileInputStream(outJobsFile);
 		XSSFWorkbook  workbook = new XSSFWorkbook(inExcelFile);	
-		XSSFRow rowHeader = workbook.getSheetAt(0).getRow(0);
+		XSSFRow rowHeader = workbook.getSheetAt(0).getRow(1);
 		int lastRowIndex = workbook.getSheetAt(0).getLastRowNum();
 		XSSFRow rowJob = workbook.getSheetAt(0).createRow(lastRowIndex + 1);
 		XSSFCell cell;	

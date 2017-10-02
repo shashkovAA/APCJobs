@@ -2,10 +2,7 @@ package Tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.util.ArrayList;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.Test;
 
 import Objects.Debug;
@@ -21,9 +18,10 @@ public class TExel
 		
 		Exel exel = new Exel();
 		
-			exel.setTemplateHeadersFile("Job_template.xlsx");
-			exel.setOutJobsExelFile("testout.xlsx");
-			exel.addHeadersDataToExelFile();
+			//exel.setTemplateHeadersFile("Job_template.xlsx");
+			//exel.setOutJobsExelFile("testout.xlsx");
+			//exel.addHeadersDataToExelFile();
+		exel.createWorkBook();
 		
 		assertEquals(true, true);
 	}
