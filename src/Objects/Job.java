@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class Job
 {
-	private HashMap<String,String> JobMap; 
+	private HashMap<String,String> JobMap;
+	private  ArrayList<DictionaryRecord> dictionaryList = new ArrayList<DictionaryRecord>();
 	
 	public Job(){
 		JobMap = new HashMap<String,String>();
@@ -21,17 +23,21 @@ public class Job
 			Debug.log.debug(it.getKey() + " " + it.getValue());	   	
 	}
 	
-	public HashMap<String,String> getJobMap(String jobFile) {
+	public HashMap<String,String> getJobMap(String jobFile) {		
+		getJobMapFromFile(jobFile);
 		
-		if (getJobMapFromFile(jobFile))
-				return JobMap;
-		else return new HashMap<String,String>();
+		if (dictionaryList.size() != 0 ) 
+			applyDictionaryToMap();
+		
+		return JobMap;			
 	}	
 	
+	
+
 	public boolean getJobMapFromFile(String fullFileName) {
 		String readline;
 		JobMap.put("NAME", ConvertNames.getFileName(fullFileName));
-		
+
 		try (BufferedReader buffer = new BufferedReader(new FileReader(fullFileName));) {
 			Debug.log.debug("---=== Reading rows from "+ ConvertNames.getFileNameWithExt(fullFileName) +" file ===---");
 			while ((readline = buffer.readLine()) != null) {
@@ -51,6 +57,38 @@ public class Job
 		return true;
 	}
 	
+	
+	private void applyDictionaryToMap(){
+		DictionaryRecord record = new DictionaryRecord();
+		String key;
+		String findExpression;
+		String oldValue;
+		String oldValueInJobMap;
+		String newValueInJobMap;
+		String newValue;
+		//boolean replaceResult = false;
+		
+		for (int i = 0; i < dictionaryList.size(); i++) {
+			record = dictionaryList.get(i);
+			key = record.getTag();
+			findExpression = record.getFindExpression();
+			oldValue = record.getOldValue();
+			newValue = record.getNewValue();
+	
+			if (JobMap.get(key).matches(findExpression)) {
+				
+				oldValueInJobMap = JobMap.get(key);
+				newValueInJobMap = oldValueInJobMap.replaceAll(oldValue, newValue);
+				JobMap.replace(key,oldValueInJobMap,newValueInJobMap);
+				Debug.log.debug("Replace value [" + oldValue + "] to [" + newValue + "] in " + key + "." );			
+			}
+		
+		}
+
+		
+	}
+	
+	
 	public JobSettingsField getJobSettingsField(String line) {
 		int semicolonFirstIndex = line.indexOf(':');
 		int semicolonLastIndex = line.lastIndexOf(':');
@@ -62,5 +100,9 @@ public class Job
 		else josefi.setValue("");
 		
 		return josefi;
+	}
+
+	public void setDictionaryList(ArrayList<DictionaryRecord> dictionaryList) {
+		this.dictionaryList = dictionaryList;
 	}	
 }

@@ -117,10 +117,10 @@ public class Exel
 	
 	}
 	
-	public void setTemplateHeadersFile(String templateHeadersFile) {
+	public void setTemplateHeadersFileName(String templateHeadersFile) {
 		this.templateHeadersFile = templateHeadersFile;	
 	}
-	public void setOutJobsExelFile(String outJobsFile) {
+	public void setOutJobsExelFileName(String outJobsFile) {
 		this.outJobsFile = outJobsFile;	
 	}
 	
@@ -137,7 +137,7 @@ public class Exel
         headerFont.setBold(true);
 		
 		XSSFCellStyle styleHeaderOverview = workbook.createCellStyle(); //Create new style
-		styleHeaderOverview.setWrapText(true); //Set wordwrap
+		styleHeaderOverview.setWrapText(true); 
 		styleHeaderOverview.setVerticalAlignment(VerticalAlignment.CENTER);
 		
 		XSSFCellStyle styleHeaderTag = workbook.createCellStyle(); //Create new style
@@ -183,7 +183,7 @@ public class Exel
 		
 		Debug.log.debug("---===  Headers getted from file Job_Templates:   ===---");
 		for (int i=0;i<headerList.size();i++)
-			Debug.log.debug(headerList.get(i));	
+			Debug.log.debug(headerList.get(i).getTag());	
 	}
 	
 	
@@ -222,6 +222,8 @@ public class Exel
 		fileOut.flush();
 		fileOut.close();	   
 	}
+	
+	
 	
 	public void readJobsHeadersFromFileToList() {
 		

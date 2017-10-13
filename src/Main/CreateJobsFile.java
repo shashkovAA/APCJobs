@@ -16,13 +16,17 @@ public class CreateJobsFile
 		String logSettingsFileName = currentPath + "\\config\\logging.xml";
 		
 		Debug.initDebugLog(logSettingsFileName);
+		Debug.log.debug("=================================================================");
 		Debug.log.info("Programm is started.");
 		
 		String jobFileName; 
+		
+		Dictionary dictionary = new Dictionary();
+		dictionary.getDictionary("config\\dictionary.txt");
 
 		Exel exel = new Exel();
-		exel.setTemplateHeadersFile("Job_template.xlsx");
-		exel.setOutJobsExelFile("out.xlsx");
+		exel.setTemplateHeadersFileName("config\\Job_template.xlsx");
+		exel.setOutJobsExelFileName("out.xlsx");
 		exel.addHeadersDataToExelFile();
 		
 		JobFilesList  list = new JobFilesList("jobs\\", ".job");
@@ -32,7 +36,9 @@ public class CreateJobsFile
 		for (int i=0; i<jobFilesList.size(); i++) {
 			jobFileName = currentPath + "\\jobs\\" + jobFilesList.get(i);
 			Job job = new Job();
-			HashMap<String, String> jobMap = job.getJobMap(jobFileName);		
+			job.setDictionaryList(dictionary.dictionaryList);
+			HashMap<String, String> jobMap = job.getJobMap(jobFileName);
+			//dictionary.applyToMap(dictionary.dictionaryList);
 			exel.addJobDataToExel(jobMap);
 		}
 		

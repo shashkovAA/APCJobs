@@ -31,7 +31,7 @@ public class Debug {
     
     public static void initDebugLog() {
     	String currentPath =  new File("").getAbsolutePath();
-    	System.setProperty("logFileName", currentPath + "\\debug");
+    	System.setProperty("logFileName", currentPath + "\\logs\\debug");
     	System.setProperty("logFileLevel", "info");
     	System.setProperty("logFileSize", "1 Mb");
     	System.setProperty("logFileCount", "5");

@@ -28,10 +28,11 @@ import java.util.ArrayList;
 	    	return jobFilesList;
 	    }
 
+	   
 	    private void getListJobFilesInFolder() {
 
 		File jobsDir = new File(jobFolder);
-
+		
 		Debug.log.info("Get list of files in directory " + jobFolder);
 
 		for (File file : jobsDir.listFiles()) {
