@@ -14,6 +14,8 @@ public class CreateJobsFile
 	{
 		String currentPath =  new File("").getAbsolutePath();	
 		String logSettingsFileName = currentPath + "\\config\\logging.xml";
+		String outXlsxFile = "out.xlsx";
+		
 		
 		Debug.initDebugLog(logSettingsFileName);
 		Debug.log.debug("=================================================================");
@@ -26,12 +28,12 @@ public class CreateJobsFile
 
 		Exel exel = new Exel();
 		exel.setTemplateHeadersFileName("config\\Job_template.xlsx");
-		exel.setOutJobsExelFileName("out.xlsx");
+		exel.setOutJobsExelFileName(outXlsxFile);
 		exel.addHeadersDataToExelFile();
 		
-		JobFilesList  list = new JobFilesList("jobs\\", ".job");
+		
 		ArrayList<String> jobFilesList = new ArrayList<String>();
-		jobFilesList = list.get();
+		jobFilesList = new JobFilesList("jobs\\", ".job").get();
 		
 		for (int i=0; i<jobFilesList.size(); i++) {
 			jobFileName = currentPath + "\\jobs\\" + jobFilesList.get(i);
@@ -42,6 +44,7 @@ public class CreateJobsFile
 			exel.addJobDataToExel(jobMap);
 		}
 		
+		Debug.log.info("Programm is finished. Processed "+ jobFilesList.size() +" JOB files. Output results writed to file :" + outXlsxFile);
 		
 	}
 

@@ -70,17 +70,21 @@ public class Job
 		
 		for (int i = 0; i < dictionaryList.size(); i++) {
 			record = dictionaryList.get(i);
-			key = record.getTag();
+			key = record.getTag();		
 			findExpression = record.getFindExpression();
 			oldValue = record.getOldValue();
 			newValue = record.getNewValue();
-	
-			if (JobMap.get(key).matches(findExpression)) {
+			Debug.log.debug("key =" + key + ", findExpression = " + findExpression + ", oldValue =" + oldValue + ", newValue =" + newValue);
+			
+			if (JobMap.get(key) != null) {
+					
+				if (JobMap.get(key).matches(findExpression)) {
 				
-				oldValueInJobMap = JobMap.get(key);
-				newValueInJobMap = oldValueInJobMap.replaceAll(oldValue, newValue);
-				JobMap.replace(key,oldValueInJobMap,newValueInJobMap);
-				Debug.log.debug("Replace value [" + oldValue + "] to [" + newValue + "] in " + key + "." );			
+					oldValueInJobMap = JobMap.get(key);
+					newValueInJobMap = oldValueInJobMap.replaceAll(oldValue, newValue);
+					JobMap.replace(key,oldValueInJobMap,newValueInJobMap);
+					Debug.log.debug("Replace value [" + oldValue + "] to [" + newValue + "] in " + key + "." );			
+				}
 			}
 		
 		}
